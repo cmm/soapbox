@@ -4,8 +4,9 @@
 (Linux desktop is perfectly fine out of the box these days, with one
 small caveat: until you seriously load it)
 ### Stability
-Desktop must survive a serious bout of load without losing your
-session or buggering it up so much that you have to reboot.
+Desktop must survive an episode of high CPU and/or RAM load without
+losing your session or buggering it up so much that you have to
+reboot.
 ### Responsiveness
 Desktop must stay at least minimally alive-feeling under load.
 ### Playing media without skipping
@@ -34,8 +35,8 @@ swappiness value only appropriate for headless servers, etc.
 Depends on distro, but usually it's either just the kernel OOM killer
 (impossible to disable, late to act, not exactly discerning --
 basically you just don't want to ever get to the point where it is
-invoked) or badly-configured systemd-oomd that may easily decide to
-kill your Gnome Shell and will wait 20s or more till it does anything.
+invoked) or misconfigured systemd-oomd that may easily decide to kill
+your Gnome Shell and will wait 20s or more till it does anything.
 ## Media
 No threadirqs, no timer access for the `audio` group, no adding the
 main user to `audio` at install time, no adding main user to `rtkit`
@@ -48,17 +49,17 @@ you don't really need any "pro" features) and/or outdated, but it's
 still mostly very good.
 
 At least recent Pipewire is (almost) fine out of the box (you _may_
-have to increase headroom, especially for USB & BT audio, and I'm not
+need to increase headroom, especially for USB & BT audio, and I'm not
 totally clear on whether you have to specify RT prio and niceness
 explicitly or not, so I do anyway) -- provided all other configuration
 is in order, which it is of course emphatically not.
 ## Zram swap
 May not be enabled.
 ## MGLRU
-At most just enabled (it's the kernel default when it exists at all,
+At most just enabled (by default when it's in kernel at all,
 probably?), with no further tuning (well, it's only in mainline since
 6.1, so understandable).  Google people have put a ton of work into it
-because they needed to get ChromeOS & Android to behave reasonably.
+since they needed to get ChromeOS & Android to behave reasonably.
 It's Good, you want to use it, probably on servers too.
 
 # Theory of Getting There
@@ -72,10 +73,10 @@ runtime visibility into its configuration and cgroups, what's more to
 ask).
 ### Avoid killing critical services on OOM
 Systemd/Gnome take care to setup proper cgroups and slices, use them!
-Basic idea is, only unleash preventive oomd on `app` and `background`
-slices (if system/session services start eating RAM uncontrollably,
-you have way bigger problems anyway IMO).  `machine` slice is matter
-of use case and opinion, which I don't (yet) have.
+Basic idea is to only unleash preventive oomd on `app` and
+`background` slices (if system/session services start eating RAM
+uncontrollably, you have way bigger problems anyway IMO).  `machine`
+slice is matter of use case and opinion, which I don't (yet) have.
 ## Responsiveness
 ### Swap to zram preferentially
 (Happens by itself when you enable zram swap, but you still have to at
@@ -89,8 +90,8 @@ Make sure (somehow, see below) that builds (and similar) get the
 
 I/O scheduling depends on the file system; for example btrfs leaks I/O
 priorities all over the place by design (or severe lack of incentive
-to, same difference), so better avoid touching I/O scheduling at all
-if you use btrfs.  You have an SSD anyway, so it's probably fine!
+not to, same difference), so better avoid touching I/O scheduling at
+all if you use btrfs.  You have an SSD anyway, it's probably fine.
 ## Media
 Apply the reasonable "pro audio" advice and you should be golden.
 
