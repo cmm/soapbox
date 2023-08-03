@@ -30,7 +30,9 @@ red-eyed friends on a stupid web forum or whatever.
 ## Scheduling
 Scheduler is not configured for desktop responsiveness: voluntary
 preemption, big quantums, scheduling classes barely utilized,
-swappiness value only appropriate for headless servers, etc.
+swappiness value only appropriate for headless servers (ok, this one's
+actually kind of tricky given zram -- still, with zram the usual
+default is way too small & without it is too big), etc.
 ## OOM handling
 Depends on distro, but usually it's either just the kernel OOM killer
 (impossible to disable, late to act, not exactly discerning --
@@ -103,8 +105,15 @@ though).  I will not help you configure your imperative distro.
 
 ## Basics
 ```nix
-boot.kernel.sysctl."vm.swappiness" = 1;
+
 zramSwap.enable = true;
+# use values deemed by folk wisdom to be optimal with zstd zram swap
+boot.kernel.sysctl = {
+  "vm.swappiness" = 180;
+  "vm.page-cluster" = 0;
+  "vm.watermark_scale_factor" = 125;
+  "vm.watermark_boost_factor" = 0;
+};
 
 # tell Systemd to measure things (probably the default these days?
 # doesn't hurt, anyway):
